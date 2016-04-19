@@ -1,0 +1,51 @@
+/etc/sysconfig/network-scripts/ifcfg-eth1
+
+2.Настройка iptables(маркируем траффик) на лоадбалансерах
+
+ 
+
+ На lb01
+
+
+# iptables -t mangle -N IPVS
+# iptables -t mangle -N IPVS
+# iptables -t mangle -I PREROUTING -j IPVS
+# iptables -t mangle -I PREROUTING -j IPVS
+# iptables -t mangle -I IPVS -m mac --mac-source 00:0c:29:ce:94:76 -j RETURN
+# iptables -t mangle -I IPVS -m mac --mac-source 00:0c:29:ce:94:76 -j RETURN
+
+00:0c:29:ce:94:76 – это mac-adress eth0 на lb02
+00:0c:29:ce:94:76 – это mac-adress eth0 на lb02
+
+# iptables -t mangle -A IPVS -d 192.168.1.126/32 -i eth0 -p tcp -m tcp --dport 80 -j MARK --set-xmark 1
+# iptables -t mangle -A IPVS -d 192.168.1.126/32 -i eth0 -p tcp -m tcp --dport 80 -j MARK --set-xmark 1
+# iptables -t mangle -A IPVS -d 192.168.1.125/32 -i eth0 -p tcp -m tcp --dport 443 -j MARK --set-xmark 2
+# iptables -t mangle -A IPVS -d 192.168.1.125/32 -i eth0 -p tcp -m tcp --dport 443 -j MARK --set-xmark 2
+# iptables -S -t mangle
+# iptables -S -t mangle
+# /etc/init.d/iptables save
+# /etc/init.d/iptables save
+ 
+
+На lb02
+
+
+# iptables -t mangle -N IPVS
+# iptables -t mangle -N IPVS
+# iptables -t mangle -I PREROUTING -j IPVS
+# iptables -t mangle -I PREROUTING -j IPVS
+
+# iptables -t mangle -I IPVS -m mac --mac-source 00:0c:29:d4:9c:c6-j RETURN
+# iptables -t mangle -I IPVS -m mac --mac-source 00:0c:29:d4:9c:c6-j RETURN
+00:0c:29:d4:9c:c6– это mac-adress eth0 на lb01
+00:0c:29:d4:9c:c6– это mac-adress eth0 на lb01
+
+# iptables -t mangle -A IPVS -d 192.168.1.126/32 -i eth0 -p tcp -m tcp --dport 80 -j MARK --set-xmark 1
+# iptables -t mangle -A IPVS -d 192.168.1.126/32 -i eth0 -p tcp -m tcp --dport 80 -j MARK --set-xmark 1
+# iptables -t mangle -A IPVS -d 192.168.1.125/32 -i eth0 -p tcp -m tcp --dport 443 -j MARK --set-xmark 2
+# iptables -t mangle -A IPVS -d 192.168.1.125/32 -i eth0 -p tcp -m tcp --dport 443 -j MARK --set-xmark 2
+# iptables -S -t mangle
+# iptables -S -t mangle
+
+# /etc/init.d/iptables save
+# /etc/init.d/iptables save
